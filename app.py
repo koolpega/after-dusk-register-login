@@ -441,7 +441,16 @@ def major_register():
 
     if access_token != stored_access or open_id != stored_open_id:
         return jsonify({"error": "access_token or open_id mismatch"}, 403), 403
+    
+    account_id_ref = db.reference(f"guest/{uid}/accountId")
+    existing_account_id = account_id_ref.get()
 
+    if existing_account_id is not None:
+        return jsonify({
+            "error": "Account already registered",
+            "accountId": existing_account_id
+        }), 409
+    
     try:
         expected = xor_platform_check(open_id)
     except Exception as e:
