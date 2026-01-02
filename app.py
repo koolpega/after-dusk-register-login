@@ -44,6 +44,11 @@ except Exception as e:
     print("Failed to initialize Firebase Admin SDK:", e, file=sys.stderr)
     raise SystemExit(1)
 
+def get_client_ip():
+    if "X-Forwarded-For" in request.headers:
+        return request.headers["X-Forwarded-For"].split(",")[0].strip()
+    return request.remote_addr
+
 def build_majorregister_proto():
     fdp = descriptor_pb2.FileDescriptorProto()
     fdp.name = "majorregister.proto"
@@ -544,6 +549,8 @@ def major_login():
         "jwt": jwt_token,
         "proto_raw_hex": binascii.hexlify(plaintext).decode(),
     }
+
+    profile["client_ip"] = get_client_ip()
 
     ACCEPTED_FIELDS = [
         "event_time",
