@@ -464,7 +464,7 @@ def major_register():
     if expected != platform_register_info:
         return jsonify({"error": "platform_register_info mismatch"}, 403), 403
 
-    accountId = uid + 10000000
+    accountId = uid
 
     now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     profile_data = {
